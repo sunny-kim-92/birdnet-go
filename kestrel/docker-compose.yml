@@ -1,0 +1,27 @@
+# The owner's fork of BirdNET-Go, run beside the stock instance (birdnode/host, :8060).
+# Build + start:   docker compose -f kestrel/docker-compose.yml up -d --build   (from the repo root)
+# Web UI:          http://localhost:8061
+# Audio:           the same node1 stream as stock, from birdnode/host's mediamtx (joins that
+#                  compose's network, so the birdnode stack must be up first).
+# State:           kestrel/config and kestrel/data (gitignored); started as a copy of the stock config.
+services:
+  birdnet-go-fork:
+    build:
+      context: ..
+      args:
+        BUILD_VERSION: fork-dev
+    image: birdnet-go-fork:dev
+    restart: unless-stopped
+    environment:
+      TZ: America/New_York
+    ports:
+      - "8061:8080"
+    volumes:
+      - ./config:/config
+      - ./data:/data
+    networks: [birdnode]
+
+networks:
+  birdnode:
+    name: host_default
+    external: true
